@@ -2,78 +2,91 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <title>Hệ thống quản lý đơn xin nghỉ phép</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
         }
 
         body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: linear-gradient(135deg, #2980b9, #6dd5fa, #ffffff);
+            background-image: url('img/Asm.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .container {
-            background: white;
-            width: 480px;
-            padding: 40px 50px;
-            border-radius: 16px;
+        .welcome-box {
+            background-color: white; /* Container màu trắng */
+            padding: 80px 70px; /* tăng padding để box to hơn */
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.3);
             text-align: center;
-            box-shadow: 0 0 25px rgba(0,0,0,0.15);
-            animation: fadeIn 0.8s ease-in-out;
+            max-width: 600px; /* tăng chiều rộng */
+            animation: fadeIn 1s ease-in-out;
         }
 
-        h1 {
-            font-size: 22px;
+        .welcome-box h1 {
+            font-size: 32px; /* tăng font chữ */
             color: #2c3e50;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
         }
 
-        p {
-            color: #555;
-            margin-bottom: 30px;
-            font-size: 15px;
+        .welcome-box p {
+            font-size: 18px; /* tăng font chữ */
+            color: #34495e;
+            margin-bottom: 35px;
         }
 
-        a {
+        .welcome-box a {
             display: inline-block;
-            padding: 10px 25px;
+            padding: 14px 30px; /* tăng kích thước button */
+            margin: 0 12px;
             background: #3498db;
             color: white;
-            font-weight: bold;
             text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
         }
 
-        a:hover {
+        .welcome-box a:hover {
             background: #2980b9;
             transform: scale(1.05);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        footer {
-            margin-top: 25px;
-            font-size: 13px;
-            color: #888;
+        @media screen and (max-width: 500px) {
+            .welcome-box {
+                padding: 60px 30px; /* tăng padding để box vẫn to trên mobile */
+            }
+            .welcome-box h1 {
+                font-size: 26px;
+            }
+            .welcome-box p {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Hệ thống quản lý đơn xin nghỉ phép</h1>
+    <div class="welcome-box">
+        <h1>Chào mừng</h1>
+        <p>Hệ thống quản lý đơn xin nghỉ phép</p>
         <a href="login.jsp">Đăng nhập</a>
+        <a href="register.jsp">Đăng ký</a>
     </div>
 </body>
 </html>
