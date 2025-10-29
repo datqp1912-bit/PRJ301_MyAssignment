@@ -85,8 +85,8 @@
     <div class="welcome-box">
         <h1>Chào mừng</h1>
         <p>Hệ thống quản lý đơn xin nghỉ phép</p>
-        <a href="login.jsp">Đăng nhập</a>
-        <a href="register.jsp">Đăng ký</a>
+        <a href="login">Đăng nhập</a>
+        <a href="register">Đăng ký</a>
     </div>
 </body>
 </html>
