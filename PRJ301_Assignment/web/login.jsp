@@ -8,32 +8,31 @@
 
     </head>
     <body>
-    <div class="login-box">
-        <h2>Đăng nhập</h2>
-        <!-- Gửi dữ liệu đến servlet LoginServlet qua phương thức POST -->
-        <form action="login" method="post">
-            <label for="username">Tên đăng nhập</label>
-            <input type="text" id="username" name="username" placeholder="Username" required>
+        <div class="login-box">
+            <h2>Đăng nhập</h2>
+            <!-- Gửi dữ liệu đến servlet LoginServlet qua phương thức POST -->
+            <form action="login" method="post">
+                <label for="username">Tên đăng nhập</label>
+                <input type="text" id="username" name="username" placeholder="Username" required>
 
-            <label for="password">Mật khẩu</label>
-            <input type="password" id="password" name="password" placeholder="Password" required>
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password" placeholder="Password" required>
 
-            <div class="remember">
-                <input type="checkbox" id="remember">
-                <label for="remember">Remember me</label>
-            </div>
+                <div class="remember">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me</label>
+                </div>
 
-            <button type="submit">Login</button>
-        </form>
+                <button type="submit">Login</button>
+            </form>
 
-        <a href="register">Đăng ký</a>
-    </div>
+            <a href="register">Đăng ký</a>
 
-    <!-- Hiển thị thông báo lỗi -->
-    <c:if test="${not empty ms}">
-        <center><h2 style="color: red">${ms}</h2></center>
-    </c:if>
-</body>
+            <c:if test="${not empty ms}">
+                <center><h2 style="color: red">${ms}</h2></center>
+            </c:if>
+        </div>
+    </body>
 
 </html>
 <style>

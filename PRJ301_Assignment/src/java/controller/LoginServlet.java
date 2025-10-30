@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -15,6 +16,12 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Nếu đã đăng nhập thì chuyển về trang welcome luôn
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("account") != null) {
+            response.sendRedirect("welcome");
+            return;
+        }
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
@@ -26,12 +33,36 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         UserDAO dao = new UserDAO();
-        User u = dao.checkLogin(username, password);
+        User u = dao.login(username, password);
 
         if (u != null) {
-            request.getSession().setAttribute("account", u);
-            response.sendRedirect("welcome.jsp"); // chuyển đến trang welcome
+            // Đăng nhập thành công → lưu vào session
+            HttpSession session = request.getSession();
+            session.setAttribute("account", u);
+
+            // Phân hướng theo role
+            String roleName = u.getRole().getRoleName();
+
+            switch (roleName.toLowerCase()) {
+                case "admin":
+                    response.sendRedirect("adminUserManager");
+                    break;
+                case "department manager":
+                    response.sendRedirect("dep/home");
+                    break;
+                case "group leader":
+                    response.sendRedirect("leader/home");
+                    break;
+                case "employee":
+                    response.sendRedirect("employee/home");
+                    break;
+                default:
+                    response.sendRedirect("welcome");
+                    break;
+            }
+
         } else {
+            // Sai tài khoản hoặc mật khẩu
             request.setAttribute("ms", "Sai tài khoản hoặc mật khẩu!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
@@ -39,6 +70,6 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Servlet xử lý đăng nhập người dùng";
+        return "Servlet xử lý đăng nhập và phân quyền người dùng";
     }
 }

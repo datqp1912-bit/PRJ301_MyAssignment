@@ -2,16 +2,25 @@ package dal;
 
 import java.sql.*;
 import model.User;
+import model.Role;
 
 public class UserDAO extends DBContext {
 
-    public User checkLogin(String username, String password) {
-        String sql = "SELECT * FROM [User] WHERE Username = ? AND [Password] = ? AND Active = 1";
+    public User login(String username, String password) {
         try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, username);
-            ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
+            String sql = """
+                SELECT u.UserID, u.Username, u.Password, u.Display, u.Active,
+                       r.RoleID, r.RoleName
+                FROM [User] u
+                JOIN UserRole ur ON u.UserID = ur.UserID
+                JOIN Role r ON ur.RoleID = r.RoleID
+                WHERE u.Username = ? AND u.Password = ?
+            """;
+
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, username);
+            st.setString(2, password);
+            ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
                 User u = new User();
@@ -20,13 +29,17 @@ public class UserDAO extends DBContext {
                 u.setPassword(rs.getString("Password"));
                 u.setDisplay(rs.getString("Display"));
                 u.setActive(rs.getBoolean("Active"));
+
+                Role r = new Role();
+                r.setRoleID(rs.getInt("RoleID"));
+                r.setRoleName(rs.getString("RoleName"));
+                u.setRole(r);
+
                 return u;
             }
 
-            rs.close();
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace(); // hiện lỗi nếu có
         }
         return null;
     }
