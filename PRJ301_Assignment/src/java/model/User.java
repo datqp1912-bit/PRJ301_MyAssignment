@@ -8,6 +8,7 @@ public class User {
     private boolean active;
     private Employee employee;
     private Role role;
+    private Department department;
 
     public User() {}
 
@@ -68,6 +69,14 @@ public class User {
     }
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     @Override

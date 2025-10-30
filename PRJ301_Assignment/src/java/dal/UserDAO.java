@@ -1,8 +1,12 @@
 package dal;
 
 import java.sql.*;
-import model.User;
+import java.util.ArrayList;
+import java.util.List;
+import model.Department;
+import model.Employee;
 import model.Role;
+import model.User;
 
 public class UserDAO extends DBContext {
 
@@ -43,4 +47,53 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
+
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            u.UserID,
+            u.Username,
+            u.Password,
+            u.Display,
+            d.DepName,
+            r.RoleName,
+            u.Active
+        FROM [User] u
+            JOIN UserRole ur ON u.UserID = ur.UserID
+            JOIN Role r ON ur.RoleID = r.RoleID
+            JOIN EmployeeUser eu ON u.UserID = eu.UserID
+            JOIN Employee e ON eu.EmpID = e.EmpID
+            JOIN Department d ON e.DepID = d.DepID
+    """;
+
+        try (PreparedStatement st = connection.prepareStatement(sql); ResultSet rs = st.executeQuery()) {
+
+            while (rs.next()) {
+                Role role = new Role();
+                role.setRoleName(rs.getString("RoleName"));
+
+                Department dep = new Department();
+                dep.setDepName(rs.getString("DepName"));
+
+                User u = new User();
+                u.setUserID(rs.getInt("UserID"));
+                u.setUsername(rs.getString("Username"));
+                u.setPassword(rs.getString("Password"));
+                u.setDisplay(rs.getString("Display"));
+                u.setRole(role);
+                u.setDepartment(dep);
+                u.setActive(rs.getBoolean("Active"));
+
+                list.add(u);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
 }
