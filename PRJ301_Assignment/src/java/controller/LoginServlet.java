@@ -16,12 +16,34 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Nếu đã đăng nhập thì chuyển về trang welcome luôn
+
         HttpSession session = request.getSession(false);
+
+        // Nếu đã đăng nhập, redirect thẳng theo role
         if (session != null && session.getAttribute("account") != null) {
-            response.sendRedirect("welcome");
+            String role = (String) session.getAttribute("role");
+
+            switch (role.toLowerCase()) {
+                case "admin":
+                    response.sendRedirect("adminUserManager");
+                    break;
+                case "department manager":
+                    response.sendRedirect("dep/home");
+                    break;
+                case "group leader":
+                    response.sendRedirect("leader/home");
+                    break;
+                case "employee":
+                    response.sendRedirect("employee/home");
+                    break;
+                default:
+                    response.sendRedirect("login.jsp"); // Role không xác định → quay lại login
+                    break;
+            }
             return;
         }
+
+        // Nếu chưa đăng nhập, hiển thị trang login
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
@@ -36,14 +58,13 @@ public class LoginServlet extends HttpServlet {
         User u = dao.login(username, password);
 
         if (u != null) {
-            // Đăng nhập thành công → lưu vào session
+            // Đăng nhập thành công → lưu account và role vào session
             HttpSession session = request.getSession();
             session.setAttribute("account", u);
+            session.setAttribute("role", u.getRole().getRoleName().toLowerCase());
 
-            // Phân hướng theo role
-            String roleName = u.getRole().getRoleName();
-
-            switch (roleName.toLowerCase()) {
+            // Redirect trực tiếp theo role
+            switch (u.getRole().getRoleName().toLowerCase()) {
                 case "admin":
                     response.sendRedirect("adminUserManager");
                     break;
@@ -57,7 +78,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("employee/home");
                     break;
                 default:
-                    response.sendRedirect("welcome");
+                    response.sendRedirect("login.jsp"); // Role không xác định
                     break;
             }
 
