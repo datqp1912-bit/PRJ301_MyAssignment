@@ -1,14 +1,11 @@
 package controller;
 
 import dal.UserDAO;
-import model.User;
-import java.io.IOException;
-import jakarta.servlet.ServletException;
+import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import model.User;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -16,34 +13,6 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-
-        // Nếu đã đăng nhập, redirect thẳng theo role
-        if (session != null && session.getAttribute("account") != null) {
-            String role = (String) session.getAttribute("role");
-
-            switch (role.toLowerCase()) {
-                case "admin":
-                    response.sendRedirect("adminUserManager");
-                    break;
-                case "department manager":
-                    response.sendRedirect("dep/home");
-                    break;
-                case "group leader":
-                    response.sendRedirect("leader/home");
-                    break;
-                case "employee":
-                    response.sendRedirect("employee/home");
-                    break;
-                default:
-                    response.sendRedirect("login.jsp"); // Role không xác định → quay lại login
-                    break;
-            }
-            return;
-        }
-
-        // Nếu chưa đăng nhập, hiển thị trang login
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
@@ -55,42 +24,33 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         UserDAO dao = new UserDAO();
-        User u = dao.login(username, password);
-
-        if (u != null) {
-            // Đăng nhập thành công → lưu account và role vào session
+        User user = dao.checkLogin(username, password);
+        
+        System.out.println("2222: " + user);
+        System.out.println("1: " + username + " 2: " + password);
+        if (user != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("account", u);
-            session.setAttribute("role", u.getRole().getRoleName().toLowerCase());
+            session.setAttribute("user", user);
 
-            // Redirect trực tiếp theo role
-            switch (u.getRole().getRoleName().toLowerCase()) {
-                case "admin":
+            //Phân quyền dựa trên RoleID
+            switch (user.getRoleID()) {
+                case 1: // Admin
                     response.sendRedirect("adminUserManager");
                     break;
-                case "department manager":
-                    response.sendRedirect("dep/home");
-                    break;
-                case "group leader":
-                    response.sendRedirect("leader/home");
-                    break;
-                case "employee":
-                    response.sendRedirect("employee/home");
+                case 2: // Department
+                case 3: // Group Leader
+                case 4: // Employee
+                    response.sendRedirect("userInfo");
                     break;
                 default:
-                    response.sendRedirect("login.jsp"); // Role không xác định
+                    request.setAttribute("error", "Tài khoản không có quyền truy cập!");
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
                     break;
             }
 
         } else {
-            // Sai tài khoản hoặc mật khẩu
-            request.setAttribute("ms", "Sai tài khoản hoặc mật khẩu!");
+            request.setAttribute("error", "Sai tên đăng nhập hoặc mật khẩu!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "Servlet xử lý đăng nhập và phân quyền người dùng";
     }
 }

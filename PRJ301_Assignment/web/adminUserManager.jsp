@@ -39,7 +39,6 @@
             }
         </style>
     </head>
-
     <body>
         <div class="d-flex" style="height:100vh;">
             <!-- Sidebar -->
@@ -53,7 +52,6 @@
                         </li>
                     </ul>
                 </div>
-
                 <form action="logout" method="post" class="logout-btn">
                     <button class="btn btn-danger w-100">Đăng xuất</button>
                 </form>
@@ -63,9 +61,8 @@
             <div class="p-4 flex-grow-1 bg-light">
                 <h3 class="mb-4">Danh Sách Người Dùng</h3>
 
-                <!-- THÊM NGƯỜI DÙNG + TÌM KIẾM -->
+                <!-- Nút thêm người dùng + form tìm kiếm -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <!-- ✅ Gọi servlet adminUserEdit?action=add -->
                     <a href="adminUserEdit?action=add" class="btn btn-success">
                         Thêm người dùng mới
                     </a>
@@ -74,8 +71,8 @@
                         <input type="text" 
                                name="keyword" 
                                class="form-control me-2" 
-                               placeholder="Nhập tên tài khoản hoặc hiển thị..." 
-                               value="${param.keyword}">
+                               placeholder="Nhập tên người dùng..." 
+                               value="${keyword != null ? keyword : ''}">
                         <button class="btn btn-primary">Tìm kiếm</button>
                     </form>
                 </div>
@@ -86,8 +83,9 @@
                         <tr>
                             <th>Mã</th>
                             <th>Tài khoản</th>
-                            <th>Mật khẩu</th>
-                            <th>Hiển thị</th>
+                            <th>Tên người dùng</th>
+                            <th>Email</th>
+                            <th>Số điện thoại</th>
                             <th>Phòng ban</th>
                             <th>Chức vụ</th>
                             <th>Trạng thái</th>
@@ -99,10 +97,11 @@
                             <tr>
                                 <td>${u.userID}</td>
                                 <td>${u.username}</td>
-                                <td>${u.password}</td>
-                                <td>${u.display}</td>
-                                <td>${u.department.depName}</td>
-                                <td>${u.role.roleName}</td>
+                                <td>${u.name}</td>
+                                <td>${u.email}</td>
+                                <td>${u.phone}</td>
+                                <td>${u.depName}</td>
+                                <td>${u.roleName}</td>
                                 <td>
                                     <c:choose>
                                         <c:when test="${u.active}">
@@ -114,14 +113,11 @@
                                     </c:choose>
                                 </td>
                                 <td>
-                                    <!-- ✅ Nút Sửa -->
                                     <a href="adminUserEdit?action=edit&id=${u.userID}" class="btn btn-warning btn-sm me-1">Sửa</a>
-                                    
-                                    <!-- ✅ Nút Xóa -->
                                     <a href="adminUserEdit?action=delete&id=${u.userID}" 
-                                       class="btn btn-danger btn-sm"
+                                       class="btn btn-danger btn-sm" 
                                        onclick="return confirm('Bạn có chắc muốn xóa người dùng này không?');">
-                                       Xóa
+                                        Xóa
                                     </a>
                                 </td>
                             </tr>

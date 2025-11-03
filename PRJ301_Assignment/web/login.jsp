@@ -28,8 +28,8 @@
 
             <a href="register">Đăng ký</a>
 
-            <c:if test="${not empty ms}">
-                <center><h2 style="color: red">${ms}</h2></center>
+            <c:if test="${not empty error}">
+                <center><h2 style="color: red">${error}</h2></center>
             </c:if>
         </div>
     </body>
