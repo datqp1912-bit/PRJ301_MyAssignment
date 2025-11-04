@@ -2,103 +2,69 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
     <head>
-        <title>Thêm người dùng mới</title>
+        <title>Chỉnh sửa người dùng</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                font-family: 'Segoe UI', sans-serif;
-            }
-            .sidebar {
-                width: 250px;
-                background-color: #1e293b;
-                color: white;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                padding: 20px;
-            }
-            .sidebar h5 {
-                margin-bottom: 10px;
-            }
-            .sidebar .nav-link {
-                color: white;
-                transition: background 0.3s;
-            }
-            .sidebar .nav-link:hover {
-                background-color: rgba(255, 255, 255, 0.2);
-                border-radius: 5px;
-            }
-            .logout-btn {
-                margin-top: auto;
-            }
-        </style>
     </head>
     <body>
         <div class="d-flex" style="height:100vh;">
             <!-- Sidebar -->
-            <div class="sidebar">
-                <div>
-                    <h5>Admin: ${sessionScope.account.username}</h5>
-                    <hr style="border-color: rgba(255,255,255,0.3);">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a href="adminUserManager" class="nav-link">Quản lý người dùng</a>
-                        </li>
-                    </ul>
-                </div>
-                <form action="logout" method="post" class="logout-btn">
-                    <button class="btn btn-danger w-100">Đăng xuất</button>
+            <div class="sidebar p-3 bg-dark text-white" style="width:250px;">
+                <h5>Admin: ${sessionScope.account.username}</h5>
+                <hr>
+                <a href="adminUserManager" class="nav-link text-white">Quản lý người dùng</a>
+                <form action="logout" method="post" class="mt-auto">
+                    <button class="btn btn-danger w-100 mt-3">Đăng xuất</button>
                 </form>
             </div>
 
             <!-- Main content -->
-            <div class="p-4 flex-grow-1 bg-light">
-                <h3 class="mb-4 text-center">Thêm người dùng mới</h3>
+            <div class="flex-grow-1 bg-light p-4">
+                <h3 class="text-center mb-4">Chỉnh sửa thông tin người dùng</h3>
 
-                <div class="card p-4 shadow-sm mx-auto" style="max-width: 600px;">
-                    <!-- Gửi form về servlet AdminEditServlet -->
-                    <form action="adminEdit?action=add" method="post">
+                <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
+                    <form action="adminEdit" method="post">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="id" value="${user.userID}">
 
                         <div class="mb-3">
                             <label class="form-label">Tên đầy đủ</label>
-                            <input type="text" name="name" class="form-control" required>
+                            <input type="text" name="name" class="form-control" value="${user.name}" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Tên đăng nhập</label>
-                            <input type="text" name="username" class="form-control" required>
+                            <input type="text" name="username" class="form-control" value="${user.username}" readonly>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Mật khẩu</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <input type="password" name="password" class="form-control" value="${user.password}" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control">
+                            <input type="email" name="email" class="form-control" value="${user.email}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Số điện thoại</label>
-                            <input type="text" name="phone" class="form-control">
+                            <input type="text" name="phone" class="form-control" value="${user.phone}">
                         </div>
 
                         <div class="mb-3">
-                            <label class="control-label">Phòng ban</label>
-                            <select name="depID" class="form-select" required>
+                            <label class="form-label">Phòng ban</label>
+                            <select name="depID" class="form-select">
                                 <c:forEach var="d" items="${departments}">
-                                    <option value="${d.depID}">${d.depName}</option>
+                                    <option value="${d.depID}" ${user.depID == d.depID ? 'selected' : ''}>${d.depName}</option>
                                 </c:forEach>
                             </select>
                         </div>
+
                         <div class="mb-3">
-                            <label class="control-label">Chức vụ</label>
-                            <select name="roleID" class="form-select" required>
+                            <label class="form-label">Chức vụ</label>
+                            <select name="roleID" class="form-select">
                                 <c:forEach var="r" items="${roles}">
-                                    <option value="${r.roleID}">${r.roleName}</option>
+                                    <option value="${r.roleID}" ${user.roleID == r.roleID ? 'selected' : ''}>${r.roleName}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -106,13 +72,13 @@
                         <div class="mb-3">
                             <label class="form-label">Trạng thái</label>
                             <select name="active" class="form-select">
-                                <option value="true" selected>Hoạt động</option>
-                                <option value="false">Ngưng hoạt động</option>
+                                <option value="true" ${user.active ? 'selected' : ''}>Hoạt động</option>
+                                <option value="false" ${!user.active ? 'selected' : ''}>Ngưng hoạt động</option>
                             </select>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn btn-success px-4">Lưu lại</button>
+                            <button type="submit" class="btn btn-success px-4">Lưu thay đổi</button>
                             <a href="adminUserManager" class="btn btn-secondary px-4">Hủy bỏ</a>
                         </div>
                     </form>

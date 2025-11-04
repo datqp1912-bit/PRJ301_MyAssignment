@@ -47,7 +47,7 @@ public class adminEditServlet extends HttpServlet {
                     request.setAttribute("roles", roles);
                     request.setAttribute("user", u);
 
-                    RequestDispatcher rd = request.getRequestDispatcher("adminEditUser.jsp");
+                    RequestDispatcher rd = request.getRequestDispatcher("adminEdit.jsp");
                     rd.forward(request, response);
                 } else {
                     response.sendRedirect("adminUserManager");
@@ -61,7 +61,7 @@ public class adminEditServlet extends HttpServlet {
                 request.setAttribute("departments", departments);
                 request.setAttribute("roles", roles);
 
-                RequestDispatcher rd = request.getRequestDispatcher("adminEdit.jsp");
+                RequestDispatcher rd = request.getRequestDispatcher("adminAdd.jsp");
                 rd.forward(request, response);
             } else {
                 response.sendRedirect("adminUserManager");
@@ -92,7 +92,7 @@ public class adminEditServlet extends HttpServlet {
                 String phone = request.getParameter("phone");
                 int depID = Integer.parseInt(request.getParameter("depID"));
                 int roleID = Integer.parseInt(request.getParameter("roleID"));
-                boolean active = "true".equals(request.getParameter("active"));
+                boolean active = Boolean.parseBoolean(request.getParameter("active"));
 
                 User u = new User();
                 u.setUsername(username);
@@ -107,8 +107,8 @@ public class adminEditServlet extends HttpServlet {
                 dao.addUser(u);
                 response.sendRedirect("adminUserManager");
 
-            } else if ("edit".equalsIgnoreCase(action)) {
-                // Cập nhật người dùng
+            } else if ("edit".equalsIgnoreCase(action) || "update".equalsIgnoreCase(action)) {
+                // Cập nhật người dùng (xử lý khi bấm nút "Lưu thay đổi")
                 int id = Integer.parseInt(request.getParameter("id"));
                 String username = request.getParameter("username");
                 String password = request.getParameter("password");
@@ -117,7 +117,7 @@ public class adminEditServlet extends HttpServlet {
                 String phone = request.getParameter("phone");
                 int depID = Integer.parseInt(request.getParameter("depID"));
                 int roleID = Integer.parseInt(request.getParameter("roleID"));
-                boolean active = "true".equals(request.getParameter("active"));
+                boolean active = Boolean.parseBoolean(request.getParameter("active"));
 
                 User u = new User();
                 u.setUserID(id);
