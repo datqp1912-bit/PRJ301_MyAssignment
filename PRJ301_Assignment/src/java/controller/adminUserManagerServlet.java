@@ -15,25 +15,31 @@ public class adminUserManagerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         UserDAO dao = new UserDAO();
+        String action = request.getParameter("action");
 
-        // Lấy từ khóa tìm kiếm từ JSP
+        if ("add".equalsIgnoreCase(action)) {
+            // Khi bấm nút "Thêm người dùng mới" → chuyển sang servlet adminEdit
+            response.sendRedirect("adminEdit?action=add");
+            return;
+        }
+
+        // Xử lý tìm kiếm và hiển thị danh sách người dùng
         String keyword = request.getParameter("keyword");
-
         List<User> list;
+
         if (keyword != null && !keyword.trim().isEmpty()) {
-            // Nếu có từ khóa, tìm kiếm theo Name
             list = dao.searchByName(keyword.trim());
         } else {
-            // Nếu không có từ khóa, lấy tất cả user
             list = dao.getAllUsers();
         }
 
-        // Lưu danh sách vào request attribute
         request.setAttribute("users", list);
-        request.setAttribute("keyword", keyword); // giữ giá trị tìm kiếm trên form
+        request.setAttribute("keyword", keyword);
 
-        // Forward sang JSP
         RequestDispatcher dispatcher = request.getRequestDispatcher("adminUserManager.jsp");
         dispatcher.forward(request, response);
     }
@@ -41,7 +47,8 @@ public class adminUserManagerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Gọi doGet để xử lý tìm kiếm
+
+        // Servlet này chỉ hiển thị danh sách, không xử lý thêm/sửa/xóa
         doGet(request, response);
     }
 }

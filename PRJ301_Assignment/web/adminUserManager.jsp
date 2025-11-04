@@ -63,9 +63,7 @@
 
                 <!-- Nút thêm người dùng + form tìm kiếm -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="adminUserEdit?action=add" class="btn btn-success">
-                        Thêm người dùng mới
-                    </a>
+                    <a href="adminEdit?action=add" class="btn btn-primary">Thêm người dùng mới</a>
 
                     <form action="adminUserManager" method="get" class="d-flex" style="width: 50%;">
                         <input type="text" 
@@ -113,8 +111,8 @@
                                     </c:choose>
                                 </td>
                                 <td>
-                                    <a href="adminUserEdit?action=edit&id=${u.userID}" class="btn btn-warning btn-sm me-1">Sửa</a>
-                                    <a href="adminUserEdit?action=delete&id=${u.userID}" 
+                                    <a href="adminEdit?action=edit&id=${u.userID}" class="btn btn-warning btn-sm me-1">Sửa</a>
+                                    <a href="adminEdit?action=delete&id=${u.userID}" 
                                        class="btn btn-danger btn-sm" 
                                        onclick="return confirm('Bạn có chắc muốn xóa người dùng này không?');">
                                         Xóa

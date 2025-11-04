@@ -119,6 +119,117 @@ public class UserDAO extends DBContext {
         return list;
     }
 
+    public void addUser(User user) {
+        String query = "INSERT INTO Users (Username, Password, Name, Email, Phone, DepID, RoleID, Status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement st = connection.prepareStatement(query);
+            st.setString(1, user.getUsername());
+            st.setString(2, user.getPassword());
+            st.setString(3, user.getName());
+            st.setString(4, user.getEmail());
+            st.setString(5, user.getPhone());
+            st.setInt(6, user.getDepID());     // Liên kết sang bảng Department
+            st.setInt(7, user.getRoleID());    // Liên kết sang bảng Role
+            st.setBoolean(8, user.isActive()); // Trạng thái hoạt động
+            st.executeUpdate();
+            st.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Cập nhật thông tin người dùng
+    public void updateUser(User user) {
+        String sql = """
+            UPDATE [User]
+            SET Username = ?, 
+                Password = ?, 
+                Name = ?, 
+                Email = ?, 
+                Phone = ?, 
+                DepID = ?, 
+                RoleID = ?, 
+                Active = ?
+            WHERE UserID = ?
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getName());
+            ps.setString(4, user.getEmail());
+            ps.setString(5, user.getPhone());
+            ps.setInt(6, user.getDepID());
+            ps.setInt(7, user.getRoleID());
+            ps.setBoolean(8, user.isActive());
+            ps.setInt(9, user.getUserID());
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Xóa người dùng theo ID
+    public void deleteUser(int id) {
+        String sql = "DELETE FROM [User] WHERE UserID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Lấy thông tin người dùng theo ID
+    public User getUserByID(int id) {
+        User user = null;
+        String sql = """
+            SELECT 
+                u.UserID,
+                u.Username,
+                u.Password,
+                u.Name,
+                u.Email,
+                u.Phone,
+                u.DepID,
+                u.RoleID,
+                d.DepName,
+                r.RoleName,
+                u.Active
+            FROM [User] u
+                JOIN Role r ON u.RoleID = r.RoleID
+                JOIN Department d ON u.DepID = d.DepID
+            WHERE u.UserID = ?
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                user = new User();
+                user.setUserID(rs.getInt("UserID"));
+                user.setUsername(rs.getString("Username"));
+                user.setPassword(rs.getString("Password"));
+                user.setName(rs.getString("Name"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("Phone"));
+                user.setDepID(rs.getInt("DepID"));
+                user.setRoleID(rs.getInt("RoleID"));
+                user.setDepName(rs.getString("DepName"));
+                user.setRoleName(rs.getString("RoleName"));
+                user.setActive(rs.getBoolean("Active"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
     public static void main(String[] args) {
         UserDAO dao = new UserDAO();
 
