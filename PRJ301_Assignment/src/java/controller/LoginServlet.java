@@ -26,12 +26,11 @@ public class LoginServlet extends HttpServlet {
         UserDAO dao = new UserDAO();
         User user = dao.checkLogin(username, password);
         
-        System.out.println("2222: " + user);
-        System.out.println("1: " + username + " 2: " + password);
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-
+            session.setAttribute("account", user);
+            
             //Phân quyền dựa trên RoleID
             switch (user.getRoleID()) {
                 case 1: // Admin
@@ -40,7 +39,7 @@ public class LoginServlet extends HttpServlet {
                 case 2: // Department
                 case 3: // Group Leader
                 case 4: // Employee
-                    response.sendRedirect("userInfo");
+                    response.sendRedirect("userInformation");
                     break;
                 default:
                     request.setAttribute("error", "Tài khoản không có quyền truy cập!");
