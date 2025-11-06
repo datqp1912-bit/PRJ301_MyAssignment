@@ -100,7 +100,7 @@
                         <li class="nav-item"><a href="userApplication" class="nav-link active">Đơn của tôi</a></li>
                         </c:if>
 
-                    <c:if test="${sessionScope.user.roleID == 2}">
+                    <c:if test="${sessionScope.user.roleID == 2 || sessionScope.user.roleID == 3}">
                         <li class="nav-item"><a href="manageRequests" class="nav-link">Quản lý đơn</a></li>
                         </c:if>
                 </ul>
@@ -188,10 +188,13 @@
                                         </c:if>
                                     </td>
                                     <td>
-                                        <a href="editRequest?reqID=${r.reqID}" class="btn btn-warning btn-sm">Sửa</a>
-                                        <a href="deleteRequest?reqID=${r.reqID}" 
+                                        <a href="UserEditApplicationServlet?action=edit&id=${r.reqID}" class="btn btn-warning btn-sm">Sửa</a>
+                                        <a href="UserEditApplicationServlet?action=delete&id=${r.reqID}" 
                                            class="btn btn-danger btn-sm"
-                                           onclick="return confirm('Bạn có chắc muốn xóa đơn này không?');">Xóa</a>
+                                           onclick="return confirm('Bạn có chắc muốn xoá đơn này không?');">
+                                            Xoá
+                                        </a>
+
                                     </td>
                                 </tr>
                             </c:forEach>

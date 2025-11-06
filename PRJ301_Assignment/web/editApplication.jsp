@@ -1,9 +1,9 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Tạo đơn mới</title>
+        <title>Chỉnh sửa đơn</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
         <style>
             body {
@@ -90,18 +90,18 @@
             </div>
         </div>
 
-        <!-- Nội dung chính -->
+        <!-- Main Content -->
         <div class="main-content">
             <div class="form-container">
-                <h3>Tạo đơn mới</h3>
+                <h3>Chỉnh sửa đơn</h3>
 
                 <c:if test="${not empty error}">
                     <div class="alert alert-danger">${error}</div>
                 </c:if>
 
-                <!-- Form tạo đơn -->
                 <form action="UserEditApplicationServlet" method="post" onsubmit="return validateDates()">
-                    <input type="hidden" name="action" value="create">
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="id" value="${req.reqID}">
 
                     <div class="mb-3">
                         <label class="form-label">Tên người tạo</label>
@@ -120,44 +120,39 @@
 
                     <div class="mb-3">
                         <label class="form-label">Từ ngày</label>
-                        <input type="date" class="form-control" name="from" id="from" required
-                               onchange="document.getElementById('to').min = this.value;">
+                        <input type="date" class="form-control" name="from" id="from"
+                               value="${req.from}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Đến ngày</label>
-                        <input type="date" class="form-control" name="to" id="to" required>
+                        <input type="date" class="form-control" name="to" id="to"
+                               value="${req.to}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Lý do</label>
-                        <textarea class="form-control" name="reason" rows="3" required></textarea>
+                        <textarea class="form-control" name="reason" rows="3" required>${req.reason}</textarea>
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Tạo đơn</button>
+                        <button type="submit" class="btn btn-success">Cập nhật</button>
                         <a href="userApplication" class="btn btn-secondary ms-2">Hủy</a>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- JS kiểm tra ngày -->
         <script>
             function validateDates() {
                 const fromDate = new Date(document.getElementById("from").value);
                 const toDate = new Date(document.getElementById("to").value);
-
                 if (toDate < fromDate) {
                     alert("❌ Ngày kết thúc không được nhỏ hơn ngày bắt đầu!");
                     return false;
                 }
                 return true;
             }
-
-            // Không cho chọn ngày trong quá khứ
-            const today = new Date().toISOString().split("T")[0];
-            document.getElementById("from").setAttribute("min", today);
         </script>
 
     </body>

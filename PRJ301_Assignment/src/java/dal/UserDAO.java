@@ -10,26 +10,41 @@ public class UserDAO extends DBContext {
     //Hàm kiểm tra đăng nhập và trả về đối tượng User nếu hợp lệ
     public User checkLogin(String username, String password) {
         User user = null;
-        String sql = "SELECT * FROM [User] WHERE Username = ? AND Password = ? AND Active = 1";
+        String sql = """
+        SELECT 
+            u.UserID,
+            u.Username,
+            u.Name,
+            u.Email,
+            u.Phone,
+            u.DepID,
+            u.RoleID,
+            d.DepName,
+            r.RoleName,
+            u.Active
+        FROM [User] u
+            JOIN Department d ON u.DepID = d.DepID
+            JOIN Role r ON u.RoleID = r.RoleID
+        WHERE u.Username = ? AND u.Password = ? AND u.Active = 1
+    """;
 
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                int userID = rs.getInt("UserID");
-                String name = rs.getString("Name");
-                String email = rs.getString("Email");
-                String phone = rs.getString("Phone");
-                int depID = rs.getInt("DepID");
-                int roleID = rs.getInt("RoleID");
-                boolean active = rs.getBoolean("Active");
-
-                //Tạo đối tượng User và trả về
-                user = new User(userID, name, email, phone, depID, roleID, active);
-
+                user = new User();
+                user.setUserID(rs.getInt("UserID"));
+                user.setUsername(rs.getString("Username"));
+                user.setName(rs.getString("Name"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("Phone"));
+                user.setDepID(rs.getInt("DepID"));
+                user.setRoleID(rs.getInt("RoleID"));
+                user.setDepName(rs.getString("DepName"));
+                user.setRoleName(rs.getString("RoleName"));
+                user.setActive(rs.getBoolean("Active"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
