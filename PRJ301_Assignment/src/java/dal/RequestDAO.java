@@ -160,4 +160,75 @@ public class RequestDAO extends DBContext {
         }
         return false;
     }
+
+    /**
+     * Lấy danh sách các đơn thuộc phòng ban cụ thể (dành cho người duyệt).
+     */
+    public List<Request> getRequestsByDepartment(int depID) {
+        List<Request> list = new ArrayList<>();
+        String sql = """
+            SELECT rq.*, 
+                   u.Name, 
+                   d.DepName, 
+                   r.RoleName, 
+                   s.StatusName, 
+                   ua.Name AS ApprovedName 
+            FROM Request rq
+            JOIN [User] u ON u.UserID = rq.Create_by
+            JOIN Department d ON d.DepID = u.DepID
+            JOIN [Role] r ON r.RoleID = u.RoleID
+            JOIN Status s ON s.StatusID = rq.StatusID
+            LEFT JOIN [User] ua ON ua.UserID = rq.Approved_by
+            WHERE u.DepID = ?
+            ORDER BY rq.Create_time DESC
+        """;
+
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setInt(1, depID);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    Request r = new Request();
+                    r.setReqID(rs.getInt("ReqID"));
+                    r.setCreateBy(rs.getInt("Create_by"));
+                    r.setCreateTime(rs.getTimestamp("Create_time"));
+                    r.setFrom(rs.getDate("From"));
+                    r.setTo(rs.getDate("To"));
+                    r.setReason(rs.getString("Reason"));
+                    r.setStatusID(rs.getInt("StatusID"));
+                    r.setApprovedBy(rs.getObject("Approved_by") != null ? rs.getInt("Approved_by") : null);
+                    r.setApprovedTime(rs.getTimestamp("Approved_time"));
+                    r.setDepName(rs.getString("DepName"));
+                    r.setRoleName(rs.getString("RoleName"));
+                    r.setStatusName(rs.getString("StatusName"));
+                    r.setName(rs.getString("Name"));
+                    r.setApprovedName(rs.getString("ApprovedName"));
+                    list.add(r);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Cập nhật trạng thái duyệt đơn (Accepted / Rejected).
+     */
+    public boolean updateRequestStatus(int reqID, int statusID, int approvedBy) {
+        String sql = """
+            UPDATE Request
+            SET StatusID = ?, Approved_by = ?, Approved_time = GETDATE()
+            WHERE ReqID = ?
+        """;
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setInt(1, statusID);
+            st.setInt(2, approvedBy);
+            st.setInt(3, reqID);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

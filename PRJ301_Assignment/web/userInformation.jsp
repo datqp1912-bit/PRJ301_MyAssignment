@@ -74,7 +74,7 @@
                         </c:if>
 
                     <c:if test="${sessionScope.user.roleID == 2 || sessionScope.user.roleID == 3}">
-                        <li class="nav-item"><a href="manageOrders" class="nav-link">Quản lý đơn</a></li>
+                        <li class="nav-item"><a href="managerRequest" class="nav-link">Quản lý đơn</a></li>
                         </c:if>
 
                 </ul>
