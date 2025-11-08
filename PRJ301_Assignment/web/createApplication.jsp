@@ -83,6 +83,10 @@
                         <c:if test="${sessionScope.user.roleID == 2 || sessionScope.user.roleID == 3}">
                         <li class="nav-item"><a href="managerRequest" class="nav-link">Quản lý đơn</a></li>
                         </c:if>
+                        
+                        <c:if test="${sessionScope.user.roleID == 2}">
+                        <li class="nav-item"><a href="agenda" class="nav-link active" style="font-weight:bold;">📅 Lịch làm việc</a></li>
+                        </c:if>
                 </ul>
             </div>
             <div class="logout-btn">
@@ -144,21 +148,33 @@
 
         <!-- JS kiểm tra ngày -->
         <script>
-            function validateDates() {
-                const fromDate = new Date(document.getElementById("from").value);
-                const toDate = new Date(document.getElementById("to").value);
+            window.onload = function () {
+                const fromInput = document.getElementById("from");
+                const toInput = document.getElementById("to");
 
-                if (toDate < fromDate) {
-                    alert("❌ Ngày kết thúc không được nhỏ hơn ngày bắt đầu!");
-                    return false;
-                }
-                return true;
-            }
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1);
 
-            // Không cho chọn ngày trong quá khứ
-            const today = new Date().toISOString().split("T")[0];
-            document.getElementById("from").setAttribute("min", today);
+                const minDate = tomorrow.toISOString().split("T")[0];
+                fromInput.setAttribute("min", minDate);
+                toInput.setAttribute("min", minDate);
+
+                // Validate ngày bắt đầu và kết thúc
+                window.validateDates = function () {
+                    const fromDate = new Date(fromInput.value);
+                    const toDate = new Date(toInput.value);
+
+                    if (toDate < fromDate) {
+                        alert("❌ Ngày kết thúc không được nhỏ hơn ngày bắt đầu!");
+                        return false;
+                    }
+                    return true;
+                };
+            };
         </script>
+
+
 
     </body>
 </html>

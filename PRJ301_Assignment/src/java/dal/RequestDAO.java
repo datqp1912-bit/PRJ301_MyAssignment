@@ -1,6 +1,7 @@
 package dal;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.*;
 import model.Request;
 
@@ -230,5 +231,56 @@ public class RequestDAO extends DBContext {
         }
         return false;
     }
+    
+    public boolean isOnLeave(int userId, LocalDate date) {
+        String sql = """
+            SELECT COUNT(*) FROM Request
+            WHERE Create_by = ? AND StatusID = 2
+            AND ? BETWEEN [From] AND [To]
+        """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setDate(2, java.sql.Date.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Lấy danh sách nhân viên trong cùng phòng ban (bao gồm cả group leader).
+     */
+    public List<Map<String, Object>> getUsersInDepartment(int depId) {
+    List<Map<String, Object>> list = new ArrayList<>();
+    String sql = """
+            SELECT u.UserID, u.Name, r.RoleName
+            FROM [User] u
+            JOIN [Role] r ON u.RoleID = r.RoleID
+            WHERE u.DepID = ? AND u.RoleID IN (2, 3, 4)
+            ORDER BY u.Name
+    """;
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, depId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("UserID", rs.getInt("UserID"));
+            map.put("Name", rs.getString("Name"));
+            map.put("RoleName", rs.getString("RoleName"));
+            list.add(map);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+    
+    
 
 }

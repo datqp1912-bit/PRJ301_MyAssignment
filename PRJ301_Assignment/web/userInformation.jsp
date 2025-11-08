@@ -76,6 +76,10 @@
                     <c:if test="${sessionScope.user.roleID == 2 || sessionScope.user.roleID == 3}">
                         <li class="nav-item"><a href="managerRequest" class="nav-link">Quản lý đơn</a></li>
                         </c:if>
+                        
+                        <c:if test="${sessionScope.user.roleID == 2}">
+                        <li class="nav-item"><a href="agenda" class="nav-link active" style="font-weight:bold;">📅 Lịch làm việc</a></li>
+                        </c:if>
 
                 </ul>
             </div>
