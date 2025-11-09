@@ -26,6 +26,7 @@ public class UserApplicationManagerServlet extends HttpServlet {
         }
 
         RequestDAO dao = new RequestDAO();
+        dao.deleteExpiredRequests(); // 🧹 Xóa đơn hết hạn trước khi hiển thị
 
         // Lấy danh sách đơn theo phòng ban
         List<Request> list = dao.getRequestsByDepartment(user.getDepID());

@@ -26,8 +26,6 @@
                 <button type="submit">Login</button>
             </form>
 
-            <a href="register">Đăng ký</a>
-
             <c:if test="${not empty error}">
                 <center><h2 style="color: red">${error}</h2></center>
             </c:if>

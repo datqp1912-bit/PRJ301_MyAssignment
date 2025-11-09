@@ -281,6 +281,20 @@ public class RequestDAO extends DBContext {
     return list;
 }
     
-    
+    /**
+ * Xóa tất cả các đơn nghỉ đã hết hạn (ngày To < ngày hiện tại)
+ */
+public void deleteExpiredRequests() {
+    String sql = "DELETE FROM Request WHERE [To] < CAST(GETDATE() AS date)";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        int deleted = ps.executeUpdate();
+        if (deleted > 0) {
+            System.out.println("Đã xoá " + deleted + " đơn nghỉ hết hạn.");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 
 }
